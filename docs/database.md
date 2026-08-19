@@ -75,7 +75,16 @@ ratings        ← company, work_order (unique), customer, technician
 
 ## Multi-tenancy (RBAC)
 
-O `spatie/laravel-permission` está configurado com a feature de **teams** habilitada (`config/permission.php`), usando `company_id` como `team_foreign_key`. Isso significa que roles e permissions atribuídas a um usuário são automaticamente escopadas pela empresa corrente — a mesma pessoa pode (no futuro) ter papéis diferentes em empresas diferentes, e um usuário de uma empresa nunca enxerga roles de outra. A resolução de qual `company_id` está "ativo" na sessão será implementada no `PermissionsTeamResolver` customizado na **Fase 4 (Multi-tenancy)**, junto com o trait `BelongsToCompany` que aplicará um global scope automático a todos os models de domínio listados acima.
+O `spatie/laravel-permission` está configurado com a feature de **teams** habilitada (`config/permission.php`), usando `company_id` como `team_foreign_key`. Isso significa que roles e permissions atribuídas a um usuário são automaticamente escopadas pela empresa corrente — a mesma pessoa pode (no futuro) ter papéis diferentes em empresas diferentes, e um usuário de uma empresa nunca enxerga roles de outra.
+
+### Enforcement (Fase 4)
+
+- **`App\Support\CurrentCompany`** — holder estático do `company_id` ativo na requisição corrente. `null` significa "sem restrição de tenant" (guests, comandos artisan, ou um `SUPER_ADMIN` com `company_id` nulo).
+- **`App\Http\Middleware\EnsureCompanyContext`** — registrado no grupo `web` (`bootstrap/app.php`), resolve `CurrentCompany` a partir de `$request->user()->company_id` a cada requisição.
+- **`App\Models\Concerns\BelongsToCompany`** — trait aplicado aos 17 models de domínio que pertencem a uma empresa (`User`, `Customer`, `Technician`, `Team`, `WorkOrder`, `Equipment`, `SlaPolicy`, `Holiday`, `ProductCategory`, `Supplier`, `Product`, `Appointment`, `Dispatch`, `InventoryMovement`, `FinancialTransaction`, `AuditLog`, `Rating`). Adiciona um global scope que filtra por `company_id` quando `CurrentCompany` está definido, e um observer `creating` que auto-preenche `company_id`. Tabelas filhas/pivot (`customer_addresses`, `work_order_items`, `team_members` etc.) não usam o trait — herdam o isolamento através da FK para o pai.
+- **`App\Support\PermissionsTeamResolver`** — implementação customizada de `PermissionsTeamResolver` do spatie/permission que usa `CurrentCompany::id()` como team id por padrão (sem precisar chamar `setPermissionsTeamId()` manualmente em todo lugar), mas ainda permite override explícito quando necessário (ex.: um super admin gerenciando outra empresa).
+
+Cobertura de testes em `tests/Feature/Tenancy/` — isolamento de queries entre duas empresas, auto-preenchimento de `company_id`, no-op do scope sem contexto de tenant, resolução do contexto a partir do login HTTP, e o resolver de permissões do spatie.
 
 ## Modelos Eloquent
 
