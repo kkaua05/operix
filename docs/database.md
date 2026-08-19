@@ -86,6 +86,16 @@ O `spatie/laravel-permission` está configurado com a feature de **teams** habil
 
 Cobertura de testes em `tests/Feature/Tenancy/` — isolamento de queries entre duas empresas, auto-preenchimento de `company_id`, no-op do scope sem contexto de tenant, resolução do contexto a partir do login HTTP, e o resolver de permissões do spatie.
 
+## RBAC (Fase 5)
+
+- **`App\Support\Permissions`** — lista canônica das 30 permissions granulares (seção 10 do spec: `customers.*`, `technicians.*`, `teams.*`, `equipment.*`, `work_orders.*`, `scheduling.*`, `dispatch.*`, `inventory.*`, `financial.*`, `reports.view`, `automations.manage`, `audit.view`, `settings.manage`, `users.manage`) e o mapa padrão role → permissions para os 6 papéis **escopados por empresa** (`admin`, `manager`, `dispatcher`, `technician`, `financial`, `support`).
+- **`SUPER_ADMIN` não é uma role do spatie/permission** — como é um papel de controle da plataforma inteira (seção 10: "Controle completo da plataforma"), não faz sentido escopá-lo por tenant como as demais roles. Em vez disso é a flag `users.is_super_admin` (boolean), verificada via `Gate::before` em `AppServiceProvider` — quando `true`, todas as autorizações são concedidas automaticamente, sem precisar de permissions/roles atribuídas.
+- **`database/seeders/PermissionSeeder.php`** — cria as 30 permissions globais (rodado uma vez, incluído no `DatabaseSeeder`).
+- **`App\Actions\SeedDefaultCompanyRoles`** — cria as 6 roles + sincroniza permissions para uma empresa específica, usado no onboarding (Fase 66) e nos seeders de demo (Fase 26). Fixa o team id do spatie/permission durante a operação e libera de volta ao modo "segue `CurrentCompany` dinamicamente" ao final (`setPermissionsTeamId(null)` limpa o pin explícito, não fixa `null` como team — isso é o que evita o bug de "travar" o resolver fora do contexto correto).
+- **Policies base**: `CustomerPolicy`, `TechnicianPolicy`, `WorkOrderPolicy` em `app/Policies/` — cada método de autorização checa a permission via `$user->can('recurso.acao')` **e** reforça o isolamento de tenant explicitamente (`$user->company_id === $model->company_id`), mesmo que o global scope do `BelongsToCompany` já devesse impedir o model de outra empresa de ser resolvido — defesa em profundidade (spec §50: autorização nunca deve depender só de uma query scope).
+
+Cobertura de testes em `tests/Feature/Rbac/` — seeding de roles por empresa (isolado entre tenants, sem role `super_admin`), negação de acesso sem a permission certa, concessão via role, negação de policy mesmo com a permission certa quando o recurso é de outra empresa, e bypass total do super admin (permissions e tenant isolation). Validado também manualmente contra MySQL real.
+
 ## Modelos Eloquent
 
 Todas as tabelas de domínio têm um model Eloquent correspondente em `app/Models/`, com relacionamentos (`BelongsTo`/`HasMany`/`BelongsToMany`), casts de enum e casts decimais para colunas monetárias/quantidade já configurados. Ver `app/Models/WorkOrder.php` como referência do model mais completo (11 relacionamentos).

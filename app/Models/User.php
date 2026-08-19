@@ -31,6 +31,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'status',
+        'is_super_admin',
     ];
 
     /**
@@ -57,6 +58,7 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
             'two_factor_confirmed_at' => 'datetime',
             'password' => 'hashed',
+            'is_super_admin' => 'boolean',
         ];
     }
 
