@@ -46,26 +46,49 @@ class Technician extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Technician, $this>
+     */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(Technician::class, 'supervisor_id');
     }
 
+    /**
+     * @return HasMany<TechnicianSkill, $this>
+     */
     public function skills(): HasMany
     {
         return $this->hasMany(TechnicianSkill::class);
     }
 
+    /**
+     * @return HasMany<Technician, $this>
+     */
+    public function subordinates(): HasMany
+    {
+        return $this->hasMany(Technician::class, 'supervisor_id');
+    }
+
+    /**
+     * @return BelongsToMany<Team, $this>
+     */
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, 'team_members')->withTimestamps();
     }
 
+    /**
+     * @return HasMany<WorkOrder, $this>
+     */
     public function workOrders(): HasMany
     {
         return $this->hasMany(WorkOrder::class);
     }
 
+    /**
+     * @return HasMany<Rating, $this>
+     */
     public function ratings(): HasMany
     {
         return $this->hasMany(Rating::class);

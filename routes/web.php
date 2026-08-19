@@ -7,6 +7,9 @@ use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Customers\Form as CustomerForm;
 use App\Livewire\Customers\Index as CustomerIndex;
 use App\Livewire\Customers\Show as CustomerShow;
+use App\Livewire\Technicians\Form as TechnicianForm;
+use App\Livewire\Technicians\Index as TechnicianIndex;
+use App\Livewire\Technicians\Show as TechnicianShow;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,5 +32,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', CustomerForm::class)->name('create');
         Route::get('/{customer}', CustomerShow::class)->name('show');
         Route::get('/{customer}/edit', CustomerForm::class)->name('edit');
+    });
+
+    Route::prefix('technicians')->name('technicians.')->group(function () {
+        Route::get('/', TechnicianIndex::class)->name('index');
+        Route::get('/create', TechnicianForm::class)->name('create');
+        Route::get('/{technician}', TechnicianShow::class)->name('show');
+        Route::get('/{technician}/edit', TechnicianForm::class)->name('edit');
     });
 });

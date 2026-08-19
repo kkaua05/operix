@@ -20,16 +20,7 @@
             </div>
 
             <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    Dashboard
-                </x-nav-link>
-
-                <p class="mt-4 mb-1 px-3 text-[10px] font-semibold tracking-wider text-op-secondary/70 uppercase">
-                    Clientes
-                </p>
-                <x-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
-                    Clientes
-                </x-nav-link>
+                @include('components.layouts.partials.sidebar-nav')
             </nav>
 
             <div class="border-t border-op-border p-3">
@@ -51,16 +42,7 @@
                 </div>
 
                 <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        Dashboard
-                    </x-nav-link>
-
-                    <p class="mt-4 mb-1 px-3 text-[10px] font-semibold tracking-wider text-op-secondary/70 uppercase">
-                        Clientes
-                    </p>
-                    <x-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
-                        Clientes
-                    </x-nav-link>
+                    @include('components.layouts.partials.sidebar-nav')
                 </nav>
             </aside>
         </div>
