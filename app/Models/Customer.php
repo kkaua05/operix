@@ -32,26 +32,41 @@ class Customer extends Model
         return $this->belongsTo(Company::class);
     }
 
+    /**
+     * @return HasMany<CustomerAddress, $this>
+     */
     public function addresses(): HasMany
     {
         return $this->hasMany(CustomerAddress::class);
     }
 
+    /**
+     * @return HasMany<CustomerContact, $this>
+     */
     public function contacts(): HasMany
     {
         return $this->hasMany(CustomerContact::class);
     }
 
+    /**
+     * @return HasMany<Equipment, $this>
+     */
     public function equipment(): HasMany
     {
         return $this->hasMany(Equipment::class);
     }
 
+    /**
+     * @return HasMany<WorkOrder, $this>
+     */
     public function workOrders(): HasMany
     {
         return $this->hasMany(WorkOrder::class);
     }
 
+    /**
+     * @return HasMany<Rating, $this>
+     */
     public function ratings(): HasMany
     {
         return $this->hasMany(Rating::class);

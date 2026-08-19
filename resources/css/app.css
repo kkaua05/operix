@@ -29,4 +29,8 @@
         background-color: var(--color-op-bg);
         color: var(--color-op-primary);
     }
+
+    [x-cloak] {
+        display: none !important;
+    }
 }

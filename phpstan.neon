@@ -6,3 +6,8 @@ parameters:
         - app
 
     level: 5
+
+    # All models use the Laravel 11+ `protected function casts(): array` style
+    # rather than the legacy `protected $casts` property; Larastan needs this
+    # flag to statically parse that method and infer cast types correctly.
+    parseModelCastsMethod: true

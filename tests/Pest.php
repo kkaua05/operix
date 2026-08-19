@@ -1,5 +1,10 @@
 <?php
 
+use App\Actions\SeedDefaultCompanyRoles;
+use App\Models\Company;
+use App\Models\User;
+use App\Support\CurrentCompany;
+use Database\Seeders\PermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,7 +49,30 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/**
+ * Creates a company + a user with the given roles assigned (permissions
+ * seeded and default company roles created), and sets CurrentCompany so
+ * role/permission lookups resolve correctly outside of an HTTP request.
+ * Returns the User; access ->company via $user->company.
+ *
+ * @param  array<int, string>  $roles
+ */
+function actingAsCompanyUser(array $roles = [], array $userAttributes = []): User
 {
-    // ..
+    (new PermissionSeeder)->run();
+
+    $company = Company::factory()->create();
+    (new SeedDefaultCompanyRoles)->handle($company);
+
+    CurrentCompany::set($company->id);
+
+    $user = User::factory()->create(array_merge(['company_id' => $company->id], $userAttributes));
+
+    foreach ($roles as $role) {
+        $user->assignRole($role);
+    }
+
+    test()->actingAs($user);
+
+    return $user;
 }
