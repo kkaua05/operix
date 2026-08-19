@@ -6,6 +6,27 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Operix design tokens (spec seção 43) */
+    --color-op-bg: #050505;
+    --color-op-surface: #0a0a0a;
+    --color-op-card: #111111;
+    --color-op-border: #1f1f1f;
+    --color-op-primary: #ffffff;
+    --color-op-secondary: #a1a1aa;
+    --color-op-accent: #6366f1;
+    --color-op-accent-hover: #818cf8;
+    --color-op-success: #22c55e;
+    --color-op-warning: #eab308;
+    --color-op-danger: #ef4444;
+    --color-op-info: #38bdf8;
+}
+
+@layer base {
+    body {
+        background-color: var(--color-op-bg);
+        color: var(--color-op-primary);
+    }
 }
