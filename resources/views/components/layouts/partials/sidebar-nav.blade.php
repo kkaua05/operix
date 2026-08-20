@@ -3,6 +3,13 @@
 </x-nav-link>
 
 <p class="mt-4 mb-1 px-3 text-[10px] font-semibold tracking-wider text-op-secondary/70 uppercase">
+    Operação
+</p>
+<x-nav-link :href="route('work-orders.index')" :active="request()->routeIs('work-orders.*')">
+    Ordens de Serviço
+</x-nav-link>
+
+<p class="mt-4 mb-1 px-3 text-[10px] font-semibold tracking-wider text-op-secondary/70 uppercase">
     Clientes
 </p>
 <x-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">

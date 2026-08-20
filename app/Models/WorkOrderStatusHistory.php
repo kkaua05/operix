@@ -34,6 +34,9 @@ class WorkOrderStatusHistory extends Model
         return $this->belongsTo(WorkOrder::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function changedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'changed_by');

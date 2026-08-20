@@ -13,6 +13,9 @@ use App\Livewire\Teams\Show as TeamShow;
 use App\Livewire\Technicians\Form as TechnicianForm;
 use App\Livewire\Technicians\Index as TechnicianIndex;
 use App\Livewire\Technicians\Show as TechnicianShow;
+use App\Livewire\WorkOrders\Form as WorkOrderForm;
+use App\Livewire\WorkOrders\Index as WorkOrderIndex;
+use App\Livewire\WorkOrders\Show as WorkOrderShow;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -49,5 +52,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', TeamForm::class)->name('create');
         Route::get('/{team}', TeamShow::class)->name('show');
         Route::get('/{team}/edit', TeamForm::class)->name('edit');
+    });
+
+    Route::prefix('work-orders')->name('work-orders.')->group(function () {
+        Route::get('/', WorkOrderIndex::class)->name('index');
+        Route::get('/create', WorkOrderForm::class)->name('create');
+        Route::get('/{workOrder}', WorkOrderShow::class)->name('show');
+        Route::get('/{workOrder}/edit', WorkOrderForm::class)->name('edit');
     });
 });

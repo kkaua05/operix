@@ -17,6 +17,19 @@ class WorkOrder extends Model
 {
     use BelongsToCompany, HasFactory, SoftDeletes;
 
+    /**
+     * Mirrors the DB column defaults so a freshly-created instance already
+     * has these set in PHP memory — otherwise Eloquent leaves them null
+     * until a fresh() reload, since MySQL applies its DEFAULT silently on
+     * INSERT without Eloquent ever seeing the value it chose.
+     */
+    protected $attributes = [
+        'priority' => 'medium',
+        'status' => 'new',
+        'origin' => 'manual',
+        'sla_status' => 'normal',
+    ];
+
     protected $fillable = [
         'company_id',
         'number',
@@ -67,6 +80,9 @@ class WorkOrder extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    /**
+     * @return BelongsTo<CustomerAddress, $this>
+     */
     public function address(): BelongsTo
     {
         return $this->belongsTo(CustomerAddress::class, 'customer_address_id');
@@ -92,61 +108,97 @@ class WorkOrder extends Model
         return $this->belongsTo(SlaPolicy::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /**
+     * @return HasMany<WorkOrderStatusHistory, $this>
+     */
     public function statusHistory(): HasMany
     {
         return $this->hasMany(WorkOrderStatusHistory::class);
     }
 
+    /**
+     * @return HasMany<WorkOrderItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(WorkOrderItem::class);
     }
 
+    /**
+     * @return HasMany<WorkOrderAttachment, $this>
+     */
     public function attachments(): HasMany
     {
         return $this->hasMany(WorkOrderAttachment::class);
     }
 
+    /**
+     * @return HasMany<WorkOrderChecklist, $this>
+     */
     public function checklists(): HasMany
     {
         return $this->hasMany(WorkOrderChecklist::class);
     }
 
+    /**
+     * @return HasMany<WorkOrderMaterial, $this>
+     */
     public function materials(): HasMany
     {
         return $this->hasMany(WorkOrderMaterial::class);
     }
 
+    /**
+     * @return HasMany<WorkOrderService, $this>
+     */
     public function services(): HasMany
     {
         return $this->hasMany(WorkOrderService::class);
     }
 
+    /**
+     * @return HasMany<Appointment, $this>
+     */
     public function appointments(): HasMany
     {
         return $this->hasMany(Appointment::class);
     }
 
+    /**
+     * @return HasMany<Dispatch, $this>
+     */
     public function dispatches(): HasMany
     {
         return $this->hasMany(Dispatch::class);
     }
 
+    /**
+     * @return HasMany<SlaEvent, $this>
+     */
     public function slaEvents(): HasMany
     {
         return $this->hasMany(SlaEvent::class);
     }
 
+    /**
+     * @return HasMany<FinancialTransaction, $this>
+     */
     public function financialTransactions(): HasMany
     {
         return $this->hasMany(FinancialTransaction::class);
     }
 
+    /**
+     * @return HasOne<Rating, $this>
+     */
     public function rating(): HasOne
     {
         return $this->hasOne(Rating::class);
