@@ -7,6 +7,8 @@ use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Customers\Form as CustomerForm;
 use App\Livewire\Customers\Index as CustomerIndex;
 use App\Livewire\Customers\Show as CustomerShow;
+use App\Livewire\Scheduling\Agenda;
+use App\Livewire\Scheduling\Form as AppointmentForm;
 use App\Livewire\Teams\Form as TeamForm;
 use App\Livewire\Teams\Index as TeamIndex;
 use App\Livewire\Teams\Show as TeamShow;
@@ -59,5 +61,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', WorkOrderForm::class)->name('create');
         Route::get('/{workOrder}', WorkOrderShow::class)->name('show');
         Route::get('/{workOrder}/edit', WorkOrderForm::class)->name('edit');
+    });
+
+    Route::prefix('scheduling')->name('scheduling.')->group(function () {
+        Route::get('/', Agenda::class)->name('index');
+        Route::get('/create', AppointmentForm::class)->name('create');
+        Route::get('/{appointment}/edit', AppointmentForm::class)->name('edit');
     });
 });

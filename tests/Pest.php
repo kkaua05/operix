@@ -2,7 +2,9 @@
 
 use App\Actions\SeedDefaultCompanyRoles;
 use App\Models\Company;
+use App\Models\Customer;
 use App\Models\User;
+use App\Models\WorkOrder;
 use App\Support\CurrentCompany;
 use Database\Seeders\PermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -75,4 +77,24 @@ function actingAsCompanyUser(array $roles = [], array $userAttributes = []): Use
     test()->actingAs($user);
 
     return $user;
+}
+
+/**
+ * WorkOrderFactory picks an unrelated random company for customer_id via
+ * Customer::factory() — fine when the work order's own tenant doesn't
+ * matter, but wrong whenever the test later touches $workOrder->customer
+ * under a specific CurrentCompany context (the BelongsToCompany scope
+ * will hide a customer from a different company, returning null). This
+ * always creates a same-company customer first.
+ *
+ * @param  array<string, mixed>  $attributes
+ */
+function createWorkOrderForCompany(int $companyId, array $attributes = []): WorkOrder
+{
+    $customer = Customer::factory()->create(['company_id' => $companyId]);
+
+    return WorkOrder::factory()->create(array_merge([
+        'company_id' => $companyId,
+        'customer_id' => $customer->id,
+    ], $attributes));
 }

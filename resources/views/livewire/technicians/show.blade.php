@@ -89,10 +89,25 @@
             </div>
         </div>
     @elseif ($activeTab === 'agenda')
-        <x-empty-state
-            title="Módulo de Agenda em construção"
-            description="A agenda deste técnico estará disponível quando o módulo de Agendamento for implementado."
-        />
+        @if ($upcomingAppointments->isEmpty())
+            <x-empty-state title="Nenhum agendamento futuro" description="Os próximos atendimentos deste técnico aparecerão aqui." />
+        @else
+            <div class="space-y-2">
+                @foreach ($upcomingAppointments as $appointment)
+                    <div wire:key="tech-appt-{{ $appointment->id }}" class="flex items-center justify-between rounded-xl border border-op-border bg-op-card p-4">
+                        <div>
+                            <a href="{{ route('work-orders.show', $appointment->work_order_id) }}" wire:navigate class="text-sm font-medium hover:text-op-accent-hover">
+                                {{ $appointment->workOrder->number }} — {{ $appointment->workOrder->customer->name }}
+                            </a>
+                            <p class="text-xs text-op-secondary">
+                                {{ $appointment->scheduled_start->format('d/m/Y H:i') }} – {{ $appointment->scheduled_end->format('H:i') }}
+                            </p>
+                        </div>
+                        <x-badge variant="info">{{ $appointment->status->label() }}</x-badge>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     @elseif ($activeTab === 'ordens')
         <x-empty-state
             title="Módulo de Ordens de Serviço em construção"

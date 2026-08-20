@@ -13,6 +13,16 @@ class Appointment extends Model
 {
     use BelongsToCompany, HasFactory, SoftDeletes;
 
+    /**
+     * Mirrors the DB column default (see WorkOrder for why this matters:
+     * without it, a freshly-created instance has `status` null in PHP
+     * memory until a fresh() reload, even though the DB already applied
+     * its own default on INSERT).
+     */
+    protected $attributes = [
+        'status' => 'scheduled',
+    ];
+
     protected $fillable = [
         'company_id',
         'work_order_id',
@@ -38,16 +48,25 @@ class Appointment extends Model
         return $this->belongsTo(Company::class);
     }
 
+    /**
+     * @return BelongsTo<WorkOrder, $this>
+     */
     public function workOrder(): BelongsTo
     {
         return $this->belongsTo(WorkOrder::class);
     }
 
+    /**
+     * @return BelongsTo<Technician, $this>
+     */
     public function technician(): BelongsTo
     {
         return $this->belongsTo(Technician::class);
     }
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);

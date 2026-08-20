@@ -36,6 +36,9 @@ class Show extends Component
         return view('livewire.technicians.show', [
             'averageRating' => $this->technician->ratings()->avg('score'),
             'ratings' => $this->activeTab === 'avaliacoes' ? $this->technician->ratings()->with('customer')->latest()->get() : collect(),
+            'upcomingAppointments' => $this->activeTab === 'agenda'
+                ? $this->technician->appointments()->with('workOrder.customer')->where('scheduled_start', '>=', now())->orderBy('scheduled_start')->get()
+                : collect(),
         ]);
     }
 }
