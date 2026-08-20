@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\SlaStatus;
 use App\Enums\WorkOrderStatus;
 use App\Events\WorkOrderStatusChanged;
 use App\Exceptions\InvalidWorkOrderStatusTransitionException;
@@ -15,9 +16,15 @@ use Illuminate\Support\Facades\DB;
  * declared in WorkOrderStatus::allowedTransitions() are permitted, every
  * change is recorded in work_order_status_history (the OS timeline, §22),
  * and started_at/completed_at are stamped automatically.
+ *
+ * Also re-evaluates the SLA status (§21) on every transition — a move into
+ * a WAITING_* status pauses the SLA clock, a move out of it resumes it —
+ * and logs the pause/resume/breach as an sla_events entry.
  */
 class WorkOrderStatusService
 {
+    public function __construct(protected SlaService $slaService) {}
+
     public function transition(WorkOrder $workOrder, WorkOrderStatus $to, ?User $user = null, ?string $notes = null): WorkOrder
     {
         $from = $workOrder->status;
@@ -37,6 +44,10 @@ class WorkOrderStatusService
                 $workOrder->completed_at = now();
             }
 
+            $previousSlaStatus = $workOrder->sla_status;
+            $newSlaStatus = $this->slaService->refreshStatus($workOrder);
+            $workOrder->sla_status = $newSlaStatus;
+
             $workOrder->save();
 
             $workOrder->statusHistory()->create([
@@ -45,6 +56,8 @@ class WorkOrderStatusService
                 'changed_by' => $user?->id,
                 'notes' => $notes,
             ]);
+
+            $this->logSlaEventIfChanged($workOrder, $previousSlaStatus, $newSlaStatus);
         });
 
         WorkOrderStatusChanged::dispatch($workOrder, $from, $to, $user);
@@ -59,6 +72,28 @@ class WorkOrderStatusService
             'to_status' => $workOrder->status->value,
             'changed_by' => $user?->id,
             'notes' => null,
+        ]);
+    }
+
+    protected function logSlaEventIfChanged(WorkOrder $workOrder, ?SlaStatus $previous, SlaStatus $new): void
+    {
+        if ($previous === $new) {
+            return;
+        }
+
+        $eventType = match ($new) {
+            SlaStatus::Paused => 'paused',
+            SlaStatus::Breached => 'breached',
+            default => $previous === SlaStatus::Paused ? 'resumed' : null,
+        };
+
+        if ($eventType === null) {
+            return;
+        }
+
+        $workOrder->slaEvents()->create([
+            'event_type' => $eventType,
+            'occurred_at' => now(),
         ]);
     }
 }

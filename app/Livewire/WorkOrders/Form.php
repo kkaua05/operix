@@ -11,6 +11,7 @@ use App\Models\SlaPolicy;
 use App\Models\Team;
 use App\Models\Technician;
 use App\Models\WorkOrder;
+use App\Services\SlaService;
 use App\Services\WorkOrderStatusService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
@@ -103,12 +104,17 @@ class Form extends Component
         ];
     }
 
-    public function save(WorkOrderStatusService $statusService): void
+    public function save(WorkOrderStatusService $statusService, SlaService $slaService): void
     {
         $validated = $this->validate();
 
         if ($this->workOrder) {
             $this->workOrder->update($validated);
+
+            $this->workOrder->sla_due_at = $slaService->calculateDueDate($this->workOrder);
+            $this->workOrder->sla_status = $slaService->refreshStatus($this->workOrder);
+            $this->workOrder->save();
+
             session()->flash('status', 'Ordem de serviço atualizada com sucesso.');
         } else {
             $validated['number'] = app(GenerateWorkOrderNumber::class)->handle(auth()->user()->company_id);
@@ -116,6 +122,10 @@ class Form extends Component
 
             $this->workOrder = WorkOrder::create($validated);
             $statusService->recordCreation($this->workOrder, auth()->user());
+
+            $this->workOrder->sla_due_at = $slaService->calculateDueDate($this->workOrder);
+            $this->workOrder->sla_status = $slaService->refreshStatus($this->workOrder);
+            $this->workOrder->save();
 
             session()->flash('status', 'Ordem de serviço criada com sucesso.');
         }

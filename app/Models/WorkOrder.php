@@ -103,6 +103,9 @@ class WorkOrder extends Model
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return BelongsTo<SlaPolicy, $this>
+     */
     public function slaPolicy(): BelongsTo
     {
         return $this->belongsTo(SlaPolicy::class);

@@ -5,6 +5,7 @@ namespace App\Livewire\WorkOrders;
 use App\Enums\WorkOrderPriority;
 use App\Enums\WorkOrderStatus;
 use App\Models\WorkOrder;
+use App\Services\SlaService;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -66,7 +67,7 @@ class Index extends Component
         session()->flash('status', 'Ordem de serviço excluída com sucesso.');
     }
 
-    public function render(): View
+    public function render(SlaService $slaService): View
     {
         $this->authorize('viewAny', WorkOrder::class);
 
@@ -88,6 +89,7 @@ class Index extends Component
             'workOrders' => $workOrders,
             'statuses' => WorkOrderStatus::cases(),
             'priorities' => WorkOrderPriority::cases(),
+            'slaService' => $slaService,
         ]);
     }
 }

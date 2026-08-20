@@ -35,6 +35,9 @@ class SlaPolicy extends Model
         return $this->belongsTo(Company::class);
     }
 
+    /**
+     * @return HasMany<WorkOrder, $this>
+     */
     public function workOrders(): HasMany
     {
         return $this->hasMany(WorkOrder::class);

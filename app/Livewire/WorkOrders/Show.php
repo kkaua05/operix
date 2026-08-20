@@ -5,6 +5,7 @@ namespace App\Livewire\WorkOrders;
 use App\Enums\WorkOrderStatus;
 use App\Exceptions\InvalidWorkOrderStatusTransitionException;
 use App\Models\WorkOrder;
+use App\Services\SlaService;
 use App\Services\WorkOrderStatusService;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
@@ -55,7 +56,7 @@ class Show extends Component
         };
     }
 
-    public function render(): View
+    public function render(SlaService $slaService): View
     {
         $this->workOrder->load([
             'customer', 'address', 'equipment', 'technician', 'team', 'slaPolicy', 'createdBy',
@@ -65,6 +66,11 @@ class Show extends Component
             'allowedTransitions' => $this->workOrder->status->allowedTransitions(),
             'statusHistory' => $this->activeTab === 'timeline'
                 ? $this->workOrder->statusHistory()->with('changedBy')->orderByDesc('created_at')->get()
+                : collect(),
+            'liveSlaStatus' => $slaService->refreshStatus($this->workOrder),
+            'slaPercentage' => $slaService->percentageElapsed($this->workOrder),
+            'slaEvents' => $this->activeTab === 'sla'
+                ? $this->workOrder->slaEvents()->orderByDesc('occurred_at')->get()
                 : collect(),
         ]);
     }

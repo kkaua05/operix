@@ -19,7 +19,7 @@ test('it moves a work order through an allowed transition and records the timeli
         'status' => WorkOrderStatus::New->value,
     ]);
 
-    $updated = (new WorkOrderStatusService)->transition($workOrder, WorkOrderStatus::Triage, $user, 'Triagem inicial');
+    $updated = (app(WorkOrderStatusService::class))->transition($workOrder, WorkOrderStatus::Triage, $user, 'Triagem inicial');
 
     expect($updated->status)->toBe(WorkOrderStatus::Triage);
 
@@ -41,7 +41,7 @@ test('it rejects a transition that is not in the allowed list', function () {
         'status' => WorkOrderStatus::New->value,
     ]);
 
-    expect(fn () => (new WorkOrderStatusService)->transition($workOrder, WorkOrderStatus::Completed))
+    expect(fn () => (app(WorkOrderStatusService::class))->transition($workOrder, WorkOrderStatus::Completed))
         ->toThrow(InvalidWorkOrderStatusTransitionException::class);
 
     expect($workOrder->fresh()->status)->toBe(WorkOrderStatus::New)
@@ -59,7 +59,7 @@ test('a completed work order cannot transition anywhere except back to in progre
     ]);
 
     expect(WorkOrderStatus::Completed->allowedTransitions())->toBe([])
-        ->and(fn () => (new WorkOrderStatusService)->transition($workOrder, WorkOrderStatus::New))
+        ->and(fn () => (app(WorkOrderStatusService::class))->transition($workOrder, WorkOrderStatus::New))
         ->toThrow(InvalidWorkOrderStatusTransitionException::class);
 });
 
@@ -73,7 +73,7 @@ test('moving to in_progress stamps started_at, and completing stamps completed_a
         'status' => WorkOrderStatus::EnRoute->value,
     ]);
 
-    $service = new WorkOrderStatusService;
+    $service = app(WorkOrderStatusService::class);
 
     $workOrder = $service->transition($workOrder, WorkOrderStatus::InProgress);
     expect($workOrder->started_at)->not->toBeNull()
@@ -95,7 +95,7 @@ test('recordCreation logs the initial timeline entry with a null from_status', f
         'status' => WorkOrderStatus::New->value,
     ]);
 
-    (new WorkOrderStatusService)->recordCreation($workOrder);
+    (app(WorkOrderStatusService::class))->recordCreation($workOrder);
 
     $history = $workOrder->statusHistory()->first();
 

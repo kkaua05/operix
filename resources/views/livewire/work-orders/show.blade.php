@@ -11,6 +11,12 @@
                 {{ $workOrder->category ? '· '.$workOrder->category : '' }}
                 {{ $workOrder->technician ? '· '.$workOrder->technician->name : '' }}
             </p>
+
+            @if ($workOrder->slaPolicy)
+                <div class="mt-3 max-w-xs">
+                    <x-sla-indicator :status="$liveSlaStatus" :percentage="$slaPercentage" />
+                </div>
+            @endif
         </div>
 
         <div class="flex gap-3">
@@ -59,6 +65,7 @@
                 'detalhes' => 'Detalhes',
                 'itens' => 'Itens',
                 'timeline' => 'Timeline',
+                'sla' => 'SLA',
                 'checklist' => 'Checklist',
                 'materiais' => 'Materiais',
                 'anexos' => 'Anexos',
@@ -150,6 +157,43 @@
                 </ol>
             @endif
         </div>
+    @elseif ($activeTab === 'sla')
+        @if (! $workOrder->slaPolicy)
+            <x-empty-state
+                title="Nenhuma política de SLA aplicada"
+                description="Edite a ordem de serviço e selecione uma política de SLA para acompanhar o prazo de atendimento."
+            />
+        @else
+            <div class="space-y-4">
+                <div class="rounded-xl border border-op-border bg-op-card p-5">
+                    <h3 class="mb-3 text-xs font-semibold tracking-wider text-op-secondary uppercase">Status do SLA</h3>
+                    <x-sla-indicator :status="$liveSlaStatus" :percentage="$slaPercentage" class="mb-4" />
+                    <dl class="space-y-2 text-sm">
+                        <div class="flex justify-between"><dt class="text-op-secondary">Política</dt><dd>{{ $workOrder->slaPolicy->name }}</dd></div>
+                        <div class="flex justify-between"><dt class="text-op-secondary">Tempo de resolução</dt><dd>{{ $workOrder->slaPolicy->resolution_time_minutes }} min</dd></div>
+                        <div class="flex justify-between"><dt class="text-op-secondary">Considera horário comercial</dt><dd>{{ $workOrder->slaPolicy->business_hours_only ? 'Sim' : 'Não' }}</dd></div>
+                        <div class="flex justify-between"><dt class="text-op-secondary">Prazo</dt><dd>{{ $workOrder->sla_due_at?->format('d/m/Y H:i') ?: '—' }}</dd></div>
+                    </dl>
+                </div>
+
+                <div class="rounded-xl border border-op-border bg-op-card p-5">
+                    <h3 class="mb-3 text-xs font-semibold tracking-wider text-op-secondary uppercase">Eventos de SLA</h3>
+
+                    @if ($slaEvents->isEmpty())
+                        <x-empty-state title="Nenhum evento de SLA registrado" description="Pausas e violações de SLA aparecerão aqui automaticamente." />
+                    @else
+                        <ul class="space-y-2 text-sm">
+                            @foreach ($slaEvents as $event)
+                                <li wire:key="sla-event-{{ $event->id }}" class="flex justify-between border-b border-op-border pb-2 last:border-0 last:pb-0">
+                                    <span>{{ ['paused' => 'SLA pausado', 'resumed' => 'SLA retomado', 'breached' => 'SLA violado'][$event->event_type] ?? $event->event_type }}</span>
+                                    <span class="text-op-secondary">{{ $event->occurred_at->format('d/m/Y H:i') }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
+            </div>
+        @endif
     @elseif ($activeTab === 'checklist')
         <x-empty-state
             title="Módulo de Checklist em construção"

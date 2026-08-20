@@ -59,6 +59,7 @@
                         <th class="px-4 py-3 font-medium">Técnico</th>
                         <th class="px-4 py-3 font-medium">Prioridade</th>
                         <th class="px-4 py-3 font-medium">Status</th>
+                        <th class="px-4 py-3 font-medium">SLA</th>
                         <th class="px-4 py-3 font-medium">Criada em</th>
                         <th class="px-4 py-3"></th>
                     </tr>
@@ -78,6 +79,18 @@
                             </td>
                             <td class="px-4 py-3">
                                 <x-status-badge :status="$workOrder->status" />
+                            </td>
+                            <td class="px-4 py-3">
+                                @if ($workOrder->sla_policy_id)
+                                    <x-badge :variant="match ($slaService->refreshStatus($workOrder)) {
+                                        \App\Enums\SlaStatus::Normal => 'success',
+                                        \App\Enums\SlaStatus::Warning => 'warning',
+                                        \App\Enums\SlaStatus::Critical, \App\Enums\SlaStatus::Breached => 'danger',
+                                        \App\Enums\SlaStatus::Paused => 'default',
+                                    }">{{ $slaService->refreshStatus($workOrder)->label() }}</x-badge>
+                                @else
+                                    <span class="text-xs text-op-secondary">—</span>
+                                @endif
                             </td>
                             <td class="px-4 py-3 text-op-secondary">{{ $workOrder->created_at->format('d/m/Y H:i') }}</td>
                             <td class="px-4 py-3 text-right">
