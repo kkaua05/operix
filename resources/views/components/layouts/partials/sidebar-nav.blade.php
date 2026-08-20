@@ -15,3 +15,6 @@
 <x-nav-link :href="route('technicians.index')" :active="request()->routeIs('technicians.*')">
     Técnicos
 </x-nav-link>
+<x-nav-link :href="route('teams.index')" :active="request()->routeIs('teams.*')">
+    Equipes
+</x-nav-link>

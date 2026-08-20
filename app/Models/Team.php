@@ -28,16 +28,25 @@ class Team extends Model
         return $this->belongsTo(Company::class);
     }
 
+    /**
+     * @return BelongsTo<Technician, $this>
+     */
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(Technician::class, 'supervisor_id');
     }
 
+    /**
+     * @return BelongsToMany<Technician, $this>
+     */
     public function technicians(): BelongsToMany
     {
         return $this->belongsToMany(Technician::class, 'team_members')->withTimestamps();
     }
 
+    /**
+     * @return HasMany<WorkOrder, $this>
+     */
     public function workOrders(): HasMany
     {
         return $this->hasMany(WorkOrder::class);

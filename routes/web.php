@@ -7,6 +7,9 @@ use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Customers\Form as CustomerForm;
 use App\Livewire\Customers\Index as CustomerIndex;
 use App\Livewire\Customers\Show as CustomerShow;
+use App\Livewire\Teams\Form as TeamForm;
+use App\Livewire\Teams\Index as TeamIndex;
+use App\Livewire\Teams\Show as TeamShow;
 use App\Livewire\Technicians\Form as TechnicianForm;
 use App\Livewire\Technicians\Index as TechnicianIndex;
 use App\Livewire\Technicians\Show as TechnicianShow;
@@ -39,5 +42,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', TechnicianForm::class)->name('create');
         Route::get('/{technician}', TechnicianShow::class)->name('show');
         Route::get('/{technician}/edit', TechnicianForm::class)->name('edit');
+    });
+
+    Route::prefix('teams')->name('teams.')->group(function () {
+        Route::get('/', TeamIndex::class)->name('index');
+        Route::get('/create', TeamForm::class)->name('create');
+        Route::get('/{team}', TeamShow::class)->name('show');
+        Route::get('/{team}/edit', TeamForm::class)->name('edit');
     });
 });
