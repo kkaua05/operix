@@ -51,3 +51,12 @@
         Fornecedores
     </x-nav-link>
 @endcan
+
+@can('viewAny', \App\Models\FinancialTransaction::class)
+    <p class="mt-4 mb-1 px-3 text-[10px] font-semibold tracking-wider text-op-secondary/70 uppercase">
+        Financeiro
+    </p>
+    <x-nav-link :href="route('financial.index')" :active="request()->routeIs('financial.*')">
+        Lançamentos
+    </x-nav-link>
+@endcan

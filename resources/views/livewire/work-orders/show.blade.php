@@ -61,15 +61,22 @@
 
     <div class="mb-6 border-b border-op-border">
         <nav class="-mb-px flex gap-6 overflow-x-auto text-sm">
-            @foreach ([
-                'detalhes' => 'Detalhes',
-                'itens' => 'Itens',
-                'timeline' => 'Timeline',
-                'sla' => 'SLA',
-                'checklist' => 'Checklist',
-                'materiais' => 'Materiais',
-                'anexos' => 'Anexos',
-            ] as $tab => $label)
+            @php
+                $tabs = [
+                    'detalhes' => 'Detalhes',
+                    'itens' => 'Itens',
+                    'timeline' => 'Timeline',
+                    'sla' => 'SLA',
+                    'checklist' => 'Checklist',
+                    'materiais' => 'Materiais',
+                    'anexos' => 'Anexos',
+                ];
+
+                if (auth()->user()->can('financial.view')) {
+                    $tabs['financeiro'] = 'Financeiro';
+                }
+            @endphp
+            @foreach ($tabs as $tab => $label)
                 <button
                     type="button"
                     wire:click="setTab('{{ $tab }}')"
@@ -203,6 +210,8 @@
         <div class="rounded-xl border border-op-border bg-op-card p-5">
             @livewire('work-orders.material-manager', ['workOrder' => $workOrder], key('materials-'.$workOrder->id))
         </div>
+    @elseif ($activeTab === 'financeiro')
+        @livewire('work-orders.financial-manager', ['workOrder' => $workOrder], key('financial-'.$workOrder->id))
     @elseif ($activeTab === 'anexos')
         <x-empty-state
             title="Módulo de Anexos em construção"

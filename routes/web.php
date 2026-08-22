@@ -8,6 +8,7 @@ use App\Livewire\Customers\Form as CustomerForm;
 use App\Livewire\Customers\Index as CustomerIndex;
 use App\Livewire\Customers\Show as CustomerShow;
 use App\Livewire\Dispatch\Center as DispatchCenter;
+use App\Livewire\Financial\Index as FinancialIndex;
 use App\Livewire\Inventory\Categories\Manager as CategoryManager;
 use App\Livewire\Inventory\Products\Form as ProductForm;
 use App\Livewire\Inventory\Products\Index as ProductIndex;
@@ -79,6 +80,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/dispatch', DispatchCenter::class)->name('dispatch.index');
+
+    Route::get('/financial', FinancialIndex::class)->name('financial.index');
 
     Route::prefix('inventory')->name('inventory.')->group(function () {
         Route::get('/categories', CategoryManager::class)->name('categories.index');
