@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\SlaStatus;
 use App\Enums\WorkOrderStatus;
+use App\Events\SlaBreached;
 use App\Events\WorkOrderStatusChanged;
 use App\Exceptions\InvalidWorkOrderStatusTransitionException;
 use App\Models\User;
@@ -33,7 +34,7 @@ class WorkOrderStatusService
             throw InvalidWorkOrderStatusTransitionException::make($from, $to);
         }
 
-        DB::transaction(function () use ($workOrder, $from, $to, $user, $notes) {
+        $justBreached = DB::transaction(function () use ($workOrder, $from, $to, $user, $notes) {
             $workOrder->status = $to;
 
             if ($to === WorkOrderStatus::InProgress && ! $workOrder->started_at) {
@@ -57,10 +58,14 @@ class WorkOrderStatusService
                 'notes' => $notes,
             ]);
 
-            $this->logSlaEventIfChanged($workOrder, $previousSlaStatus, $newSlaStatus);
+            return $this->logSlaEventIfChanged($workOrder, $previousSlaStatus, $newSlaStatus);
         });
 
         WorkOrderStatusChanged::dispatch($workOrder, $from, $to, $user);
+
+        if ($justBreached) {
+            SlaBreached::dispatch($workOrder);
+        }
 
         return $workOrder->fresh();
     }
@@ -90,10 +95,10 @@ class WorkOrderStatusService
         ]);
     }
 
-    protected function logSlaEventIfChanged(WorkOrder $workOrder, ?SlaStatus $previous, SlaStatus $new): void
+    protected function logSlaEventIfChanged(WorkOrder $workOrder, ?SlaStatus $previous, SlaStatus $new): bool
     {
         if ($previous === $new) {
-            return;
+            return false;
         }
 
         $eventType = match ($new) {
@@ -103,12 +108,14 @@ class WorkOrderStatusService
         };
 
         if ($eventType === null) {
-            return;
+            return false;
         }
 
         $workOrder->slaEvents()->create([
             'event_type' => $eventType,
             'occurred_at' => now(),
         ]);
+
+        return $eventType === 'breached';
     }
 }

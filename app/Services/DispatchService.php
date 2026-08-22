@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\WorkOrderStatus;
+use App\Events\WorkOrderAssigned;
 use App\Models\Dispatch;
 use App\Models\Technician;
 use App\Models\User;
@@ -37,6 +38,8 @@ class DispatchService
         });
 
         $workOrder->refresh();
+
+        WorkOrderAssigned::dispatch($workOrder, $technician, $dispatchedBy);
 
         if (in_array(WorkOrderStatus::Assigned, $workOrder->status->allowedTransitions(), true)) {
             $workOrder = $this->statusService->transition(

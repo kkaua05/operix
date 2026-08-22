@@ -66,3 +66,12 @@
         Relatórios
     </x-nav-link>
 @endcan
+
+@can('settings.manage')
+    <p class="mt-4 mb-1 px-3 text-[10px] font-semibold tracking-wider text-op-secondary/70 uppercase">
+        Configurações
+    </p>
+    <x-nav-link :href="route('settings.notifications')" :active="request()->routeIs('settings.notifications')">
+        Notificações
+    </x-nav-link>
+@endcan

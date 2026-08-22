@@ -62,6 +62,7 @@ class User extends Authenticatable
         ];
     }
 
+    /** @return BelongsTo<Company, $this> */
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);

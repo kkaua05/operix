@@ -20,6 +20,7 @@ use App\Livewire\Portal\WorkOrderDetail as PortalWorkOrderDetail;
 use App\Livewire\Reports\Index as ReportsIndex;
 use App\Livewire\Scheduling\Agenda;
 use App\Livewire\Scheduling\Form as AppointmentForm;
+use App\Livewire\Settings\Notifications as NotificationSettings;
 use App\Livewire\Teams\Form as TeamForm;
 use App\Livewire\Teams\Index as TeamIndex;
 use App\Livewire\Teams\Show as TeamShow;
@@ -85,6 +86,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/financial', FinancialIndex::class)->name('financial.index');
 
     Route::get('/reports', ReportsIndex::class)->name('reports.index');
+
+    Route::get('/settings/notifications', NotificationSettings::class)->name('settings.notifications');
 
     Route::prefix('inventory')->name('inventory.')->group(function () {
         Route::get('/categories', CategoryManager::class)->name('categories.index');

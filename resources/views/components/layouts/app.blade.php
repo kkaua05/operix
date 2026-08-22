@@ -56,6 +56,8 @@
                 <span class="hidden text-xs text-op-secondary lg:inline">{{ $title }}</span>
 
                 <div class="flex items-center gap-4">
+                    @livewire('notifications.bell')
+
                     <span class="hidden text-xs text-op-secondary sm:inline">{{ auth()->user()->name }}</span>
 
                     <form method="POST" action="{{ route('logout') }}">

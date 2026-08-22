@@ -58,4 +58,14 @@ class Company extends Model
     {
         return $this->hasMany(WorkOrder::class);
     }
+
+    /**
+     * The company's configured outbound webhook URL (§37), stored in the
+     * free-form settings JSON column rather than a dedicated migration —
+     * this is the only integration setting the app has so far.
+     */
+    public function webhookUrl(): ?string
+    {
+        return $this->settings['webhook_url'] ?? null;
+    }
 }

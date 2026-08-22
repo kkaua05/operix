@@ -27,5 +27,11 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function (User $user, string $ability) {
             return $user->is_super_admin ? true : null;
         });
+
+        // Event → listener wiring for §37 (WorkOrderAssigned, WorkOrderStatusChanged,
+        // SlaBreached) is picked up automatically by Laravel's event discovery —
+        // every class in app/Listeners with a typed handle(SomeEvent $event)
+        // method is wired without any registration here. Registering it again
+        // explicitly would double-fire the listener.
     }
 }
