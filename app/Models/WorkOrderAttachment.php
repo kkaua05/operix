@@ -23,11 +23,17 @@ class WorkOrderAttachment extends Model
         'ip_address',
     ];
 
+    /**
+     * @return BelongsTo<WorkOrder, $this>
+     */
     public function workOrder(): BelongsTo
     {
         return $this->belongsTo(WorkOrder::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function uploadedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'uploaded_by');

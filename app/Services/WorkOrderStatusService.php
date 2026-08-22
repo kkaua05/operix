@@ -75,6 +75,21 @@ class WorkOrderStatusService
         ]);
     }
 
+    /**
+     * Records a timeline entry without a status change — e.g. "técnico
+     * chegou ao local" (§26), which is a real milestone worth showing on
+     * the OS timeline (§22) but isn't one of the WorkOrderStatus values.
+     */
+    public function logMilestone(WorkOrder $workOrder, string $note, ?User $user = null): void
+    {
+        $workOrder->statusHistory()->create([
+            'from_status' => $workOrder->status->value,
+            'to_status' => $workOrder->status->value,
+            'changed_by' => $user?->id,
+            'notes' => $note,
+        ]);
+    }
+
     protected function logSlaEventIfChanged(WorkOrder $workOrder, ?SlaStatus $previous, SlaStatus $new): void
     {
         if ($previous === $new) {

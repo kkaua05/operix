@@ -52,9 +52,13 @@ class WorkOrder extends Model
         'estimated_duration_minutes',
         'sla_due_at',
         'sla_status',
+        'diagnosis_category',
         'diagnosis',
+        'cause',
         'resolution',
+        'recommendation',
         'notes',
+        'arrived_at',
     ];
 
     protected function casts(): array
@@ -67,6 +71,7 @@ class WorkOrder extends Model
             'started_at' => 'datetime',
             'completed_at' => 'datetime',
             'sla_due_at' => 'datetime',
+            'arrived_at' => 'datetime',
         ];
     }
 

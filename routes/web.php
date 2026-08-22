@@ -8,6 +8,8 @@ use App\Livewire\Customers\Form as CustomerForm;
 use App\Livewire\Customers\Index as CustomerIndex;
 use App\Livewire\Customers\Show as CustomerShow;
 use App\Livewire\Dispatch\Center as DispatchCenter;
+use App\Livewire\Portal\MyWorkOrders;
+use App\Livewire\Portal\WorkOrderDetail as PortalWorkOrderDetail;
 use App\Livewire\Scheduling\Agenda;
 use App\Livewire\Scheduling\Form as AppointmentForm;
 use App\Livewire\Teams\Form as TeamForm;
@@ -71,4 +73,9 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/dispatch', DispatchCenter::class)->name('dispatch.index');
+
+    Route::prefix('portal')->name('portal.')->group(function () {
+        Route::get('/', MyWorkOrders::class)->name('index');
+        Route::get('/work-orders/{workOrder}', PortalWorkOrderDetail::class)->name('work-orders.show');
+    });
 });

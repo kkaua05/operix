@@ -31,9 +31,13 @@ return new class extends Migration
             $table->unsignedInteger('estimated_duration_minutes')->nullable();
             $table->dateTime('sla_due_at')->nullable();
             $table->string('sla_status')->default('normal');
-            $table->text('diagnosis')->nullable();
-            $table->text('resolution')->nullable();
+            $table->string('diagnosis_category')->nullable();
+            $table->text('diagnosis')->nullable()->comment('Problema identificado');
+            $table->text('cause')->nullable();
+            $table->text('resolution')->nullable()->comment('Solução aplicada');
+            $table->text('recommendation')->nullable();
             $table->text('notes')->nullable();
+            $table->timestamp('arrived_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

@@ -14,6 +14,11 @@
 <x-nav-link :href="route('dispatch.index')" :active="request()->routeIs('dispatch.*')">
     Dispatch
 </x-nav-link>
+@if (auth()->user()->technician)
+    <x-nav-link :href="route('portal.index')" :active="request()->routeIs('portal.*')">
+        Modo Técnico
+    </x-nav-link>
+@endif
 
 <p class="mt-4 mb-1 px-3 text-[10px] font-semibold tracking-wider text-op-secondary/70 uppercase">
     Clientes

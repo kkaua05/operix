@@ -31,6 +31,9 @@ class WorkOrderChecklistItem extends Model
         return $this->belongsTo(WorkOrderChecklist::class, 'work_order_checklist_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function checkedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'checked_by');

@@ -3,6 +3,7 @@
 use App\Actions\SeedDefaultCompanyRoles;
 use App\Models\Company;
 use App\Models\Customer;
+use App\Models\Technician;
 use App\Models\User;
 use App\Models\WorkOrder;
 use App\Support\CurrentCompany;
@@ -77,6 +78,33 @@ function actingAsCompanyUser(array $roles = [], array $userAttributes = []): Use
     test()->actingAs($user);
 
     return $user;
+}
+
+/**
+ * Creates a company + a technician + a User account linked to that
+ * technician (Technician Portal §26 requires this link) and logs in as
+ * that user. Returns the Technician; access ->user for the User account.
+ */
+function actingAsTechnicianUser(array $technicianAttributes = []): Technician
+{
+    (new PermissionSeeder)->run();
+
+    $company = Company::factory()->create();
+    (new SeedDefaultCompanyRoles)->handle($company);
+
+    CurrentCompany::set($company->id);
+
+    $user = User::factory()->create(['company_id' => $company->id]);
+    $user->assignRole('technician');
+
+    $technician = Technician::factory()->create(array_merge([
+        'company_id' => $company->id,
+        'user_id' => $user->id,
+    ], $technicianAttributes));
+
+    test()->actingAs($user);
+
+    return $technician;
 }
 
 /**

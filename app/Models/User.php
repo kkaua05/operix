@@ -67,6 +67,9 @@ class User extends Authenticatable
         return $this->belongsTo(Company::class);
     }
 
+    /**
+     * @return HasOne<Technician, $this>
+     */
     public function technician(): HasOne
     {
         return $this->hasOne(Technician::class);

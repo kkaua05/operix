@@ -26,11 +26,17 @@ class WorkOrderChecklist extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<WorkOrder, $this>
+     */
     public function workOrder(): BelongsTo
     {
         return $this->belongsTo(WorkOrder::class);
     }
 
+    /**
+     * @return HasMany<WorkOrderChecklistItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(WorkOrderChecklistItem::class);
