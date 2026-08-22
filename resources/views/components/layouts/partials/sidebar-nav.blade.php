@@ -60,3 +60,9 @@
         Lançamentos
     </x-nav-link>
 @endcan
+
+@can('reports.view')
+    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+        Relatórios
+    </x-nav-link>
+@endcan

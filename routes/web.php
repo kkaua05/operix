@@ -17,6 +17,7 @@ use App\Livewire\Inventory\Suppliers\Form as SupplierForm;
 use App\Livewire\Inventory\Suppliers\Index as SupplierIndex;
 use App\Livewire\Portal\MyWorkOrders;
 use App\Livewire\Portal\WorkOrderDetail as PortalWorkOrderDetail;
+use App\Livewire\Reports\Index as ReportsIndex;
 use App\Livewire\Scheduling\Agenda;
 use App\Livewire\Scheduling\Form as AppointmentForm;
 use App\Livewire\Teams\Form as TeamForm;
@@ -82,6 +83,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dispatch', DispatchCenter::class)->name('dispatch.index');
 
     Route::get('/financial', FinancialIndex::class)->name('financial.index');
+
+    Route::get('/reports', ReportsIndex::class)->name('reports.index');
 
     Route::prefix('inventory')->name('inventory.')->group(function () {
         Route::get('/categories', CategoryManager::class)->name('categories.index');
