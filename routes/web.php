@@ -7,6 +7,7 @@ use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Customers\Form as CustomerForm;
 use App\Livewire\Customers\Index as CustomerIndex;
 use App\Livewire\Customers\Show as CustomerShow;
+use App\Livewire\Dispatch\Center as DispatchCenter;
 use App\Livewire\Scheduling\Agenda;
 use App\Livewire\Scheduling\Form as AppointmentForm;
 use App\Livewire\Teams\Form as TeamForm;
@@ -68,4 +69,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', AppointmentForm::class)->name('create');
         Route::get('/{appointment}/edit', AppointmentForm::class)->name('edit');
     });
+
+    Route::get('/dispatch', DispatchCenter::class)->name('dispatch.index');
 });

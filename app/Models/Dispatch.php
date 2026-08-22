@@ -34,6 +34,9 @@ class Dispatch extends Model
         return $this->belongsTo(Company::class);
     }
 
+    /**
+     * @return BelongsTo<WorkOrder, $this>
+     */
     public function workOrder(): BelongsTo
     {
         return $this->belongsTo(WorkOrder::class);
@@ -44,6 +47,9 @@ class Dispatch extends Model
         return $this->belongsTo(Technician::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function dispatchedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'dispatched_by');

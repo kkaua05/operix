@@ -11,6 +11,9 @@
 <x-nav-link :href="route('scheduling.index')" :active="request()->routeIs('scheduling.*')">
     Agenda
 </x-nav-link>
+<x-nav-link :href="route('dispatch.index')" :active="request()->routeIs('dispatch.*')">
+    Dispatch
+</x-nav-link>
 
 <p class="mt-4 mb-1 px-3 text-[10px] font-semibold tracking-wider text-op-secondary/70 uppercase">
     Clientes
