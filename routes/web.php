@@ -8,6 +8,12 @@ use App\Livewire\Customers\Form as CustomerForm;
 use App\Livewire\Customers\Index as CustomerIndex;
 use App\Livewire\Customers\Show as CustomerShow;
 use App\Livewire\Dispatch\Center as DispatchCenter;
+use App\Livewire\Inventory\Categories\Manager as CategoryManager;
+use App\Livewire\Inventory\Products\Form as ProductForm;
+use App\Livewire\Inventory\Products\Index as ProductIndex;
+use App\Livewire\Inventory\Products\Show as ProductShow;
+use App\Livewire\Inventory\Suppliers\Form as SupplierForm;
+use App\Livewire\Inventory\Suppliers\Index as SupplierIndex;
 use App\Livewire\Portal\MyWorkOrders;
 use App\Livewire\Portal\WorkOrderDetail as PortalWorkOrderDetail;
 use App\Livewire\Scheduling\Agenda;
@@ -73,6 +79,23 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/dispatch', DispatchCenter::class)->name('dispatch.index');
+
+    Route::prefix('inventory')->name('inventory.')->group(function () {
+        Route::get('/categories', CategoryManager::class)->name('categories.index');
+
+        Route::prefix('suppliers')->name('suppliers.')->group(function () {
+            Route::get('/', SupplierIndex::class)->name('index');
+            Route::get('/create', SupplierForm::class)->name('create');
+            Route::get('/{supplier}/edit', SupplierForm::class)->name('edit');
+        });
+
+        Route::prefix('products')->name('products.')->group(function () {
+            Route::get('/', ProductIndex::class)->name('index');
+            Route::get('/create', ProductForm::class)->name('create');
+            Route::get('/{product}', ProductShow::class)->name('show');
+            Route::get('/{product}/edit', ProductForm::class)->name('edit');
+        });
+    });
 
     Route::prefix('portal')->name('portal.')->group(function () {
         Route::get('/', MyWorkOrders::class)->name('index');

@@ -200,10 +200,9 @@
             description="Checklists de execução por categoria estarão disponíveis em uma próxima fase do roadmap."
         />
     @elseif ($activeTab === 'materiais')
-        <x-empty-state
-            title="Módulo de Materiais em construção"
-            description="O consumo de materiais desta ordem estará disponível quando o módulo de Estoque for implementado."
-        />
+        <div class="rounded-xl border border-op-border bg-op-card p-5">
+            @livewire('work-orders.material-manager', ['workOrder' => $workOrder], key('materials-'.$workOrder->id))
+        </div>
     @elseif ($activeTab === 'anexos')
         <x-empty-state
             title="Módulo de Anexos em construção"

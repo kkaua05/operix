@@ -1,0 +1,26 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Company;
+use App\Models\Supplier;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Supplier>
+ */
+class SupplierFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'company_id' => Company::factory(),
+            'name' => fake()->unique()->company(),
+            'document' => fake()->unique()->numerify('##.###.###/0001-##'),
+            'email' => fake()->unique()->companyEmail(),
+            'phone' => fake()->numerify('(##) #####-####'),
+            'notes' => null,
+            'status' => 'active',
+        ];
+    }
+}

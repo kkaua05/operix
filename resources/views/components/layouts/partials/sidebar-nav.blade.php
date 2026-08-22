@@ -36,3 +36,18 @@
 <x-nav-link :href="route('teams.index')" :active="request()->routeIs('teams.*')">
     Equipes
 </x-nav-link>
+
+@can('viewAny', \App\Models\Product::class)
+    <p class="mt-4 mb-1 px-3 text-[10px] font-semibold tracking-wider text-op-secondary/70 uppercase">
+        Estoque
+    </p>
+    <x-nav-link :href="route('inventory.products.index')" :active="request()->routeIs('inventory.products.*')">
+        Produtos
+    </x-nav-link>
+    <x-nav-link :href="route('inventory.categories.index')" :active="request()->routeIs('inventory.categories.*')">
+        Categorias
+    </x-nav-link>
+    <x-nav-link :href="route('inventory.suppliers.index')" :active="request()->routeIs('inventory.suppliers.*')">
+        Fornecedores
+    </x-nav-link>
+@endcan

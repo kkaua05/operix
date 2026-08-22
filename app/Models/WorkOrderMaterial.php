@@ -28,16 +28,19 @@ class WorkOrderMaterial extends Model
         ];
     }
 
+    /** @return BelongsTo<WorkOrder, $this> */
     public function workOrder(): BelongsTo
     {
         return $this->belongsTo(WorkOrder::class);
     }
 
+    /** @return BelongsTo<Product, $this> */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function registeredBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'registered_by');
