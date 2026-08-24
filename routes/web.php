@@ -17,6 +17,7 @@ use App\Livewire\Inventory\Products\Index as ProductIndex;
 use App\Livewire\Inventory\Products\Show as ProductShow;
 use App\Livewire\Inventory\Suppliers\Form as SupplierForm;
 use App\Livewire\Inventory\Suppliers\Index as SupplierIndex;
+use App\Livewire\Ixc\Index as IxcIndex;
 use App\Livewire\Portal\MyWorkOrders;
 use App\Livewire\Portal\WorkOrderDetail as PortalWorkOrderDetail;
 use App\Livewire\Reports\Index as ReportsIndex;
@@ -87,6 +88,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/dispatch', DispatchCenter::class)->name('dispatch.index');
+
+    Route::get('/ixc', IxcIndex::class)->name('ixc.index');
 
     Route::get('/financial', FinancialIndex::class)->name('financial.index');
 

@@ -1,0 +1,15 @@
+{
+  "name": "ixc-sync",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Headless-browser sync worker that logs into the IXC Provedor admin panel (no API available on this account) and extracts service orders for a specific branch/technicians, for the Operix IXC integration.",
+  "scripts": {
+    "scrape": "node scrape.js",
+    "install-browser": "playwright install chromium"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "playwright": "^1.48.0"
+  }
+}

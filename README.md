@@ -154,6 +154,7 @@ docs/            Documentação técnica detalhada
 - [`docs/security.md`](docs/security.md) — medidas de segurança implementadas
 - [`docs/deployment.md`](docs/deployment.md) — guia de deploy em produção
 - [`docs/roadmap.md`](docs/roadmap.md) — status das 26 fases e backlog pós-lançamento
+- [`docs/ixc-integration.md`](docs/ixc-integration.md) — sincronização de OS do IXC Provedor sem API (scraper headless)
 
 ## Roadmap
 

@@ -53,6 +53,8 @@ class Permissions
 
         'settings.manage',
         'users.manage',
+
+        'ixc.view',
     ];
 
     /**
@@ -78,6 +80,7 @@ class Permissions
             'financial.view',
             'reports.view',
             'audit.view',
+            'ixc.view',
         ],
 
         'dispatcher' => [
@@ -85,6 +88,7 @@ class Permissions
             'work_orders.view', 'work_orders.update', 'work_orders.assign',
             'scheduling.view', 'scheduling.manage',
             'dispatch.view', 'dispatch.manage',
+            'ixc.view',
         ],
 
         'technician' => [
