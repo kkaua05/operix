@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Livewire\Customers;
+namespace App\Livewire\Users;
 
-use App\Models\Customer;
+use App\Models\User;
 use App\Services\AuditService;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
@@ -10,16 +10,13 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.app', ['title' => 'Clientes — Operix'])]
+#[Layout('components.layouts.app', ['title' => 'Usuários — Operix'])]
 class Index extends Component
 {
     use WithPagination;
 
     #[Url(as: 'busca', history: true)]
     public string $search = '';
-
-    #[Url(as: 'status')]
-    public string $status = '';
 
     public ?int $confirmingDeleteId = null;
 
@@ -28,14 +25,9 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function updatingStatus(): void
+    public function confirmDelete(int $userId): void
     {
-        $this->resetPage();
-    }
-
-    public function confirmDelete(int $customerId): void
-    {
-        $this->confirmingDeleteId = $customerId;
+        $this->confirmingDeleteId = $userId;
     }
 
     public function cancelDelete(): void
@@ -45,37 +37,35 @@ class Index extends Component
 
     public function delete(AuditService $auditService): void
     {
-        $customer = Customer::findOrFail($this->confirmingDeleteId);
+        $user = User::findOrFail($this->confirmingDeleteId);
 
-        $this->authorize('delete', $customer);
+        $this->authorize('delete', $user);
 
-        $auditService->log('customer.deleted', $customer, ['name' => $customer->name], user: auth()->user());
+        $auditService->log('user.deleted', $user, ['name' => $user->name, 'email' => $user->email], null, auth()->user());
 
-        $customer->delete();
+        $user->delete();
 
         $this->confirmingDeleteId = null;
         $this->resetPage();
 
-        session()->flash('status', 'Cliente excluído com sucesso.');
+        session()->flash('status', 'Usuário excluído com sucesso.');
     }
 
     public function render(): View
     {
-        $this->authorize('viewAny', Customer::class);
+        $this->authorize('viewAny', User::class);
 
-        $customers = Customer::query()
+        $users = User::query()
             ->when($this->search !== '', function ($query) {
                 $query->where(function ($query) {
                     $query->where('name', 'like', "%{$this->search}%")
-                        ->orWhere('document', 'like', "%{$this->search}%")
                         ->orWhere('email', 'like', "%{$this->search}%");
                 });
             })
-            ->when($this->status !== '', fn ($query) => $query->where('status', $this->status))
-            ->withCount('workOrders')
+            ->with('roles')
             ->orderBy('name')
             ->paginate(15);
 
-        return view('livewire.customers.index', ['customers' => $customers]);
+        return view('livewire.users.index', ['users' => $users]);
     }
 }

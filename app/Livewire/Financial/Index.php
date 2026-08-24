@@ -4,6 +4,7 @@ namespace App\Livewire\Financial;
 
 use App\Enums\FinancialTransactionType;
 use App\Models\FinancialTransaction;
+use App\Services\AuditService;
 use App\Services\FinancialService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
@@ -81,13 +82,13 @@ class Index extends Component
         $this->showForm = true;
     }
 
-    public function save(): void
+    public function save(AuditService $auditService): void
     {
         $this->authorize('create', FinancialTransaction::class);
 
         $validated = $this->validate($this->formRules());
 
-        FinancialTransaction::create([
+        $transaction = FinancialTransaction::create([
             'type' => $validated['form_type'],
             'category' => $validated['form_category'],
             'description' => $validated['form_description'],
@@ -95,6 +96,12 @@ class Index extends Component
             'occurred_at' => $validated['form_occurred_at'],
             'created_by' => auth()->id(),
         ]);
+
+        $auditService->log('financial.transaction_created', $transaction, null, [
+            'type' => $transaction->type->value,
+            'description' => $transaction->description,
+            'amount' => (float) $transaction->amount,
+        ], auth()->user());
 
         $this->reset(['form_category', 'form_description', 'form_amount']);
         $this->form_type = 'cost';
@@ -104,11 +111,17 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function delete(int $transactionId): void
+    public function delete(int $transactionId, AuditService $auditService): void
     {
         $transaction = FinancialTransaction::findOrFail($transactionId);
 
         $this->authorize('delete', $transaction);
+
+        $auditService->log('financial.transaction_deleted', $transaction, [
+            'type' => $transaction->type->value,
+            'description' => $transaction->description,
+            'amount' => (float) $transaction->amount,
+        ], null, auth()->user());
 
         $transaction->delete();
     }

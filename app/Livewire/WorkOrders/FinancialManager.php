@@ -5,6 +5,7 @@ namespace App\Livewire\WorkOrders;
 use App\Enums\FinancialTransactionType;
 use App\Models\FinancialTransaction;
 use App\Models\WorkOrder;
+use App\Services\AuditService;
 use App\Services\FinancialService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\Rule;
@@ -60,17 +61,23 @@ class FinancialManager extends Component
         $this->showForm = true;
     }
 
-    public function save(): void
+    public function save(AuditService $auditService): void
     {
         $this->authorize('create', FinancialTransaction::class);
 
         $validated = $this->validate();
 
-        $this->workOrder->financialTransactions()->create([
+        $transaction = $this->workOrder->financialTransactions()->create([
             ...$validated,
             'customer_id' => $this->workOrder->customer_id,
             'created_by' => auth()->id(),
         ]);
+
+        $auditService->log('financial.transaction_created', $transaction, null, [
+            'work_order' => $this->workOrder->number,
+            'type' => $transaction->type->value,
+            'amount' => (float) $transaction->amount,
+        ], auth()->user());
 
         $this->reset(['category', 'description', 'amount']);
         $this->type = 'cost';
@@ -79,11 +86,17 @@ class FinancialManager extends Component
         $this->showForm = false;
     }
 
-    public function delete(int $transactionId): void
+    public function delete(int $transactionId, AuditService $auditService): void
     {
         $transaction = $this->workOrder->financialTransactions()->findOrFail($transactionId);
 
         $this->authorize('delete', $transaction);
+
+        $auditService->log('financial.transaction_deleted', $transaction, [
+            'work_order' => $this->workOrder->number,
+            'type' => $transaction->type->value,
+            'amount' => (float) $transaction->amount,
+        ], null, auth()->user());
 
         $transaction->delete();
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LogoutController;
+use App\Livewire\Audit\Index as AuditIndex;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\ResetPassword;
@@ -27,6 +28,8 @@ use App\Livewire\Teams\Show as TeamShow;
 use App\Livewire\Technicians\Form as TechnicianForm;
 use App\Livewire\Technicians\Index as TechnicianIndex;
 use App\Livewire\Technicians\Show as TechnicianShow;
+use App\Livewire\Users\Form as UserForm;
+use App\Livewire\Users\Index as UserIndex;
 use App\Livewire\WorkOrders\Form as WorkOrderForm;
 use App\Livewire\WorkOrders\Index as WorkOrderIndex;
 use App\Livewire\WorkOrders\Show as WorkOrderShow;
@@ -88,6 +91,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports', ReportsIndex::class)->name('reports.index');
 
     Route::get('/settings/notifications', NotificationSettings::class)->name('settings.notifications');
+
+    Route::get('/audit', AuditIndex::class)->name('audit.index');
+
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', UserIndex::class)->name('index');
+        Route::get('/create', UserForm::class)->name('create');
+        Route::get('/{user}/edit', UserForm::class)->name('edit');
+    });
 
     Route::prefix('inventory')->name('inventory.')->group(function () {
         Route::get('/categories', CategoryManager::class)->name('categories.index');

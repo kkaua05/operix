@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Services\AuditService;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -19,7 +20,7 @@ class Login extends Component
 
     public bool $remember = false;
 
-    public function login(): void
+    public function login(AuditService $auditService): void
     {
         $this->validate([
             'email' => ['required', 'string', 'email'],
@@ -31,6 +32,8 @@ class Login extends Component
         if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
+            $auditService->log('auth.login_failed', new: ['email' => $this->email]);
+
             throw ValidationException::withMessages([
                 'email' => __('As credenciais informadas não conferem.'),
             ]);
@@ -38,6 +41,8 @@ class Login extends Component
 
         RateLimiter::clear($this->throttleKey());
         session()->regenerate();
+
+        $auditService->log('auth.login', user: Auth::user());
 
         $this->redirectRoute('dashboard', navigate: true);
     }

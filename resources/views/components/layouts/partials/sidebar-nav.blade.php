@@ -74,4 +74,14 @@
     <x-nav-link :href="route('settings.notifications')" :active="request()->routeIs('settings.notifications')">
         Notificações
     </x-nav-link>
+    @can('viewAny', \App\Models\User::class)
+        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+            Usuários
+        </x-nav-link>
+    @endcan
+    @can('audit.view')
+        <x-nav-link :href="route('audit.index')" :active="request()->routeIs('audit.*')">
+            Auditoria
+        </x-nav-link>
+    @endcan
 @endcan

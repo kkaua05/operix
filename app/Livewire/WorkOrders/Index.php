@@ -5,6 +5,7 @@ namespace App\Livewire\WorkOrders;
 use App\Enums\WorkOrderPriority;
 use App\Enums\WorkOrderStatus;
 use App\Models\WorkOrder;
+use App\Services\AuditService;
 use App\Services\SlaService;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
@@ -53,11 +54,13 @@ class Index extends Component
         $this->confirmingDeleteId = null;
     }
 
-    public function delete(): void
+    public function delete(AuditService $auditService): void
     {
         $workOrder = WorkOrder::findOrFail($this->confirmingDeleteId);
 
         $this->authorize('delete', $workOrder);
+
+        $auditService->log('work_order.deleted', $workOrder, ['number' => $workOrder->number], user: auth()->user());
 
         $workOrder->delete();
 

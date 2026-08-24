@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Settings;
 
+use App\Services\AuditService;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -29,17 +30,26 @@ class Notifications extends Component
         ];
     }
 
-    public function save(): void
+    public function save(AuditService $auditService): void
     {
         $this->authorize('settings.manage');
 
         $validated = $this->validate();
 
         $company = auth()->user()->company;
+        $oldUrl = $company->webhookUrl();
         $settings = $company->settings ?? [];
         $settings['webhook_url'] = $validated['webhook_url'] !== '' ? $validated['webhook_url'] : null;
 
         $company->update(['settings' => $settings]);
+
+        $auditService->log(
+            'settings.webhook_updated',
+            $company,
+            ['webhook_url' => $oldUrl],
+            ['webhook_url' => $settings['webhook_url']],
+            auth()->user(),
+        );
 
         session()->flash('status', 'Configurações de notificação atualizadas com sucesso.');
     }

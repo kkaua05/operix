@@ -35,6 +35,17 @@ class User extends Authenticatable
     ];
 
     /**
+     * Mirrors the users.status DB column default so a freshly created
+     * instance (before a fresh() reload) already reflects "active" in
+     * memory instead of null.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'status' => 'active',
+    ];
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
