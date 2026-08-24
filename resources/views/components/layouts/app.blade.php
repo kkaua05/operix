@@ -58,6 +58,10 @@
 
                 <span class="hidden text-xs text-op-secondary lg:inline">{{ $title }}</span>
 
+                <div class="hidden max-w-xs flex-1 px-6 sm:block">
+                    @livewire('search.command-palette')
+                </div>
+
                 <div class="flex items-center gap-4">
                     @livewire('notifications.bell')
 

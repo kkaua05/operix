@@ -8,6 +8,7 @@ use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Customers\Form as CustomerForm;
 use App\Livewire\Customers\Index as CustomerIndex;
 use App\Livewire\Customers\Show as CustomerShow;
+use App\Livewire\Dashboard\Index as DashboardIndex;
 use App\Livewire\Dispatch\Center as DispatchCenter;
 use App\Livewire\Financial\Index as FinancialIndex;
 use App\Livewire\Inventory\Categories\Manager as CategoryManager;
@@ -47,7 +48,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::view('/dashboard', 'dashboard.index')->name('dashboard');
+    Route::get('/dashboard', DashboardIndex::class)->name('dashboard');
     Route::view('/profile', 'profile.edit')->name('profile.edit');
     Route::post('/logout', LogoutController::class)->name('logout');
 
