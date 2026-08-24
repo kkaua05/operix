@@ -153,9 +153,12 @@ docs/            Documentação técnica detalhada
 - [`docs/api.md`](docs/api.md) — API REST v1: autenticação, endpoints, contrato de resposta
 - [`docs/security.md`](docs/security.md) — medidas de segurança implementadas
 - [`docs/deployment.md`](docs/deployment.md) — guia de deploy em produção
+- [`docs/roadmap.md`](docs/roadmap.md) — status das 26 fases e backlog pós-lançamento
 
 ## Roadmap
 
-O projeto segue um roadmap de 26 fases incrementais (fundação → banco de dados → autenticação →
-multi-tenancy → RBAC → módulos de negócio → API → qualidade → produção). Progresso e decisões
-de cada fase estão registrados no histórico de commits do repositório.
+O projeto seguiu um roadmap de 26 fases incrementais (fundação → banco de dados → autenticação →
+multi-tenancy → RBAC → módulos de negócio → API → qualidade → produção), todas concluídas. Ver
+[`docs/roadmap.md`](docs/roadmap.md) para o status de cada fase, como popular uma empresa de
+demonstração completa, e o backlog de itens deliberadamente fora do escopo original. Progresso e
+decisões de cada fase também estão registrados no histórico de commits do repositório.

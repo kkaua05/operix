@@ -9,9 +9,10 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      *
-     * Demo company/users/work orders (spec §53-54) are seeded in Fase 26
-     * (Production Readiness). For now this only bootstraps the global
-     * permission catalog RBAC depends on.
+     * Only bootstraps the global permission catalog RBAC depends on — this
+     * runs on every install, including production. A demo company with
+     * realistic data (§53-54) is a separate, explicit opt-in: run
+     * `php artisan db:seed --class=DemoDataSeeder`.
      */
     public function run(): void
     {
