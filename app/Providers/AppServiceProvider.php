@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use App\Models\User;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,5 +36,14 @@ class AppServiceProvider extends ServiceProvider
         // every class in app/Listeners with a typed handle(SomeEvent $event)
         // method is wired without any registration here. Registering it again
         // explicitly would double-fire the listener.
+
+        // Rate limit for /api/v1/* (§50): Laravel 11+ no longer registers a
+        // default "api" limiter without a RouteServiceProvider, so without
+        // this the api middleware group's throttle:api alias would 500 on
+        // first request. Keyed by the authenticated token owner, not IP —
+        // a shared office IP must not throttle every user in it together.
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
     }
 }

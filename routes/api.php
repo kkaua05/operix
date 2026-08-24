@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\V1\TechnicianController;
 use App\Http\Controllers\Api\V1\WorkOrderController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->name('api.v1.')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::apiResource('work-orders', WorkOrderController::class)->only(['index', 'show', 'store']);
     Route::apiResource('customers', CustomerController::class)->only(['index', 'show']);
     Route::apiResource('technicians', TechnicianController::class)->only(['index', 'show']);
