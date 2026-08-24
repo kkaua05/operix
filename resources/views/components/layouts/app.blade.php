@@ -27,6 +27,9 @@
                 <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.*')">
                     Perfil
                 </x-nav-link>
+                <x-nav-link :href="route('settings.api-tokens')" :active="request()->routeIs('settings.api-tokens')">
+                    Tokens de API
+                </x-nav-link>
             </div>
         </aside>
 

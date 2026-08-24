@@ -21,6 +21,7 @@ use App\Livewire\Portal\WorkOrderDetail as PortalWorkOrderDetail;
 use App\Livewire\Reports\Index as ReportsIndex;
 use App\Livewire\Scheduling\Agenda;
 use App\Livewire\Scheduling\Form as AppointmentForm;
+use App\Livewire\Settings\ApiTokens;
 use App\Livewire\Settings\Notifications as NotificationSettings;
 use App\Livewire\Teams\Form as TeamForm;
 use App\Livewire\Teams\Index as TeamIndex;
@@ -91,6 +92,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports', ReportsIndex::class)->name('reports.index');
 
     Route::get('/settings/notifications', NotificationSettings::class)->name('settings.notifications');
+    Route::get('/settings/api-tokens', ApiTokens::class)->name('settings.api-tokens');
 
     Route::get('/audit', AuditIndex::class)->name('audit.index');
 
