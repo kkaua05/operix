@@ -9,3 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('sla:check')->everyFiveMinutes();
+Schedule::command('stock:critical-digest')->dailyAt('08:00');
+Schedule::command('ratings:remind-pending')->dailyAt('09:00');

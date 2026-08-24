@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\SlaStatus;
 use App\Enums\WorkOrderStatus;
+use App\Events\SlaBreached;
 use App\Models\WorkOrder;
 use App\Services\SlaService;
 use Illuminate\Console\Command;
@@ -13,8 +14,12 @@ use Illuminate\Console\Command;
  * Status transitions already refresh this live (WorkOrderStatusService),
  * but a ticket that just sits without any status change also needs its
  * SLA to tick from Normal → Warning → Critical → Breached over time —
- * this command is what makes that happen. Scheduled in routes/console.php;
- * the Fase 61 Scheduler phase is what formalizes the full scheduling setup.
+ * this command is what makes that happen. Scheduled in routes/console.php.
+ *
+ * Dispatches SlaBreached (§37/§38) for every newly detected breach, the
+ * same event WorkOrderStatusService fires on a breaching transition —
+ * this is what lets a ticket that silently goes overdue (no status
+ * change at all) still reach management via NotifyManagementOfSlaBreach.
  */
 class CheckWorkOrderSlaBreaches extends Command
 {
@@ -49,6 +54,7 @@ class CheckWorkOrderSlaBreaches extends Command
                     'event_type' => 'breached',
                     'occurred_at' => now(),
                 ]);
+                SlaBreached::dispatch($workOrder);
                 $breached++;
             }
         }

@@ -100,6 +100,7 @@ class WorkOrder extends Model
         return $this->belongsTo(Equipment::class);
     }
 
+    /** @return BelongsTo<Technician, $this> */
     public function technician(): BelongsTo
     {
         return $this->belongsTo(Technician::class);
